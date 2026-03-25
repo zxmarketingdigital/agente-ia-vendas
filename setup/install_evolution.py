@@ -7,10 +7,30 @@ import json
 import secrets
 from pathlib import Path
 
+def is_already_running():
+    """Verifica se já existe uma Evolution API rodando na porta 8080."""
+    try:
+        import urllib.request
+        response = urllib.request.urlopen("http://localhost:8080/", timeout=3)
+        data = json.loads(response.read())
+        return "Evolution API" in data.get("message", "")
+    except:
+        return False
+
+
 def main():
     print("=" * 60)
     print("📦 Instalando Evolution API")
     print("=" * 60)
+
+    # Verificar se já está rodando
+    print("\n🔍 Verificando se já existe uma Evolution API rodando...")
+    if is_already_running():
+        print("✅ Evolution API já está rodando em localhost:8080!")
+        print("   Não é necessário instalar novamente.")
+        print("\nProxima etapa:")
+        print("  python3 setup/connect_whatsapp.py\n")
+        return
 
     home = Path.home()
     evo_dir = home / "meu-agente" / "evolution-api"
