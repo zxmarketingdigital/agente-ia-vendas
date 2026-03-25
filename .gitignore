@@ -1,0 +1,49 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# SQLite databases
+*.sqlite
+*.sqlite3
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Evolution API
+evolution-api/
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Temporary
+/tmp
+*.tmp
+.cache/
+
+# Generated files
+/dist
+/build
+*.egg-info/
