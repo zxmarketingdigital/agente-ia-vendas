@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente IA de Vendas — ZX LAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #16161f;
+  --bg-card-hover: #1a1a25;
+  --border: #1e1e2e;
+  --border-light: rgba(255,255,255,0.06);
+  --text-primary: #e8e8ed;
+  --text-secondary: #8b8b9e;
+  --text-muted: #5a5a6e;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #6366f1;
+  --accent-cyan: #22d3ee;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --accent-orange: #f97316;
+  --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+  --gradient-hero: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #22d3ee 100%);
+  --gradient-card: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.04));
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── UTILITIES ── */
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+.gradient-text {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.3);
+  color: #a78bfa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.badge.green {
+  background: rgba(16,185,129,0.1);
+  border-color: rgba(16,185,129,0.3);
+  color: #34d399;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10,10,15,0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.nav-logo span { color: var(--accent-purple); }
+
+.nav-right {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 120px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(34,211,238,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 20% 60%, rgba(139,92,246,0.06) 0%, transparent 50%);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+}
+
+.hero-badge { margin-bottom: 32px; }
+
+.hero h1 {
+  font-size: clamp(2.8rem, 6vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin: 0 auto 48px;
+  line-height: 1.7;
+}
+
+.hero-sub strong { color: var(--text-primary); font-weight: 600; }
+
+/* Hero chat mockup */
+.hero-mockup {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0;
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto 56px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.1);
+}
+
+.mockup-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ff5f56; }
+.dot-y { background: #ffbd2e; }
+.dot-g { background: #27c93f; }
+
+.mockup-title {
+  flex: 1;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+}
+
+.mockup-body { padding: 20px; }
+
+.chat-row { display: flex; flex-direction: column; margin: 10px 0; }
+.chat-row.bot { align-items: flex-start; }
+.chat-row.user { align-items: flex-end; }
+
+.bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.83rem;
+  line-height: 1.55;
+}
+
+.bubble.bot {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px 14px 14px 14px;
+}
+
+.bubble.user {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-radius: 14px 4px 14px 14px;
+}
+
+.chat-label {
+  font-size: 0.62rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+}
+
+/* Hero stats */
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-item { text-align: center; }
+.stat-num {
+  font-size: 2.4rem;
+  font-weight: 800;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ── SECTIONS ── */
+section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 96px 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+section:last-of-type { border-bottom: none; }
+
+.section-badge { margin-bottom: 20px; }
+
+.section-title {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  max-width: 600px;
+  margin-bottom: 48px;
+}
+
+/* ── CARDS ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 32px 0;
+}
+
+@media (max-width: 640px) { .card-grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.2s, background 0.2s;
+  page-break-inside: avoid;
+}
+
+.card:hover {
+  border-color: rgba(99,102,241,0.3);
+  background: var(--bg-card-hover);
+}
+
+.card-icon { font-size: 1.5rem; margin-bottom: 12px; display: block; }
+.card-title { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.card-text { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; }
+
+/* ── FLOW ── */
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 32px;
+  background: var(--gradient-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 32px 0;
+}
+
+.flow-step { text-align: center; padding: 0 20px; }
+.flow-icon { font-size: 1.8rem; display: block; margin-bottom: 10px; }
+.flow-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.flow-arr { color: var(--accent-purple); font-size: 1.2rem; opacity: 0.5; }
+
+/* ── TERMINAL / CODE ── */
+.terminal {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 24px 0;
+  page-break-inside: avoid;
+}
+
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid #30363d;
+}
+
+.terminal-title {
+  flex: 1;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.terminal-body {
+  padding: 20px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.9;
+}
+
+.t-comment { color: #6e7681; }
+.t-prompt { color: #10b981; }
+.t-cmd { color: #e6edf3; }
+.t-url { color: #79c0ff; }
+.t-highlight { color: #a78bfa; font-weight: 600; }
+.t-line { display: block; }
+
+/* ── DIALOGUE ── */
+.dialogue {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 24px 0;
+  page-break-inside: avoid;
+}
+
+.dialogue-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.dialogue-title {
+  flex: 1;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.dialogue-body { padding: 24px; }
+
+.d-row { display: flex; flex-direction: column; margin: 10px 0; }
+.d-row.ai { align-items: flex-start; }
+.d-row.user { align-items: flex-end; }
+
+.d-bubble {
+  max-width: 88%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.d-bubble.ai {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px 14px 14px 14px;
+}
+
+.d-bubble.user {
+  background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3));
+  color: #c4b5fd;
+  border: 1px solid rgba(139,92,246,0.3);
+  border-radius: 14px 4px 14px 14px;
+  font-style: italic;
+}
+
+.d-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+  letter-spacing: 0.08em;
+}
+
+/* ── CALLOUTS ── */
+.callout {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  border-left: 3px solid;
+  page-break-inside: avoid;
+}
+
+.callout.success {
+  background: rgba(16,185,129,0.06);
+  border-color: #10b981;
+  color: #6ee7b7;
+}
+
+.callout.warning {
+  background: rgba(245,158,11,0.06);
+  border-color: #f59e0b;
+  color: #fcd34d;
+}
+
+.callout.info {
+  background: rgba(99,102,241,0.06);
+  border-color: #6366f1;
+  color: #a5b4fc;
+}
+
+.callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+.callout-body { font-size: 0.88rem; line-height: 1.7; }
+.callout-body strong { color: var(--text-primary); font-weight: 600; }
+
+/* ── OPTIONS ── */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 24px 0;
+}
+
+@media (max-width: 640px) { .options-grid { grid-template-columns: 1fr; } }
+
+.option-card {
+  position: relative;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.2s;
+}
+
+.opt-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.opt-name { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.opt-model { font-size: 0.78rem; color: var(--accent-purple); font-family: 'JetBrains Mono', monospace; }
+.opt-cost { font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; font-family: 'JetBrains Mono', monospace; }
+
+.opt-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-size: 0.58rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+  border: 1px solid rgba(16,185,129,0.3);
+  background: rgba(16,185,129,0.08);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 0.88rem;
+}
+
+.data-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--text-secondary);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.data-table td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent-purple);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,0.015); }
+
+/* ── VERSIONS ── */
+.versions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 32px 0;
+}
+
+@media (max-width: 640px) { .versions-grid { grid-template-columns: 1fr; } }
+
+.version-card {
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  page-break-inside: avoid;
+}
+
+.version-card.active {
+  border-color: rgba(139,92,246,0.4);
+  background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04));
+  box-shadow: 0 0 40px rgba(139,92,246,0.08);
+}
+
+.v-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.v-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.v-list {
+  list-style: none;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 2;
+}
+
+.v-list li::before { content: '→ '; color: var(--accent-purple); opacity: 0.6; }
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 40px 0;
+}
+
+/* ── REPO BOX ── */
+.repo-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  background: rgba(99,102,241,0.06);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.repo-url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  color: var(--accent-blue);
+}
+
+.repo-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── STEP HEADER ── */
+.step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.step-num {
+  min-width: 52px; height: 52px;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-purple);
+  flex-shrink: 0;
+}
+
+.step-info { flex: 1; }
+
+.step-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-purple);
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.step-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.step-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 0.08em;
+}
+
+/* ── PRINT ── */
+@media print {
+  nav { display: none; }
+  body { background: #fff; color: #111; }
+  .hero { min-height: auto; padding: 60px 48px; page-break-after: always; }
+  section { padding: 56px 48px; }
+  .hero-bg, .hero-grid { display: none; }
+  .page-break { page-break-before: always; }
+  .card, .option-card, .version-card { break-inside: avoid; }
+  .gradient-text { -webkit-text-fill-color: #6366f1; }
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 48px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+footer span { color: var(--accent-purple); }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.blink { animation: blink 1s step-end infinite; color: var(--accent-green); }
+
+/* ── PROGRESS ── */
+.progress-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.progress-fill {
+  display: inline-block;
+  width: 12px; height: 12px;
+  background: var(--accent-purple);
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+.progress-empty {
+  display: inline-block;
+  width: 12px; height: 12px;
+  background: var(--border);
+  border-radius: 2px;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>ZX</span> LAB</div>
+  <div class="nav-right mono">Agente IA de Vendas — v1.0</div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">
+    <div class="badge">Workshop Prático — Setup em 15 min</div>
+  </div>
+
+  <h1>
+    Crie seu<br>
+    <span class="gradient-text">Agente IA de Vendas</span><br>
+    no WhatsApp
+  </h1>
+
+  <p class="hero-sub">
+    Você responde algumas perguntas.<br>
+    <strong>O Claude instala, configura e ativa tudo por você.</strong><br>
+    Sem digitar comandos. Sem código.
+  </p>
+
+  <div class="hero-mockup">
+    <div class="mockup-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <div class="mockup-title">Claude Code — setup em andamento</div>
+    </div>
+    <div class="mockup-body">
+      <div class="chat-row bot">
+        <div class="bubble bot">Oi! 👋 Vou criar seu agente de vendas agora. Qual é o nome do seu produto?</div>
+        <div class="chat-label">Claude</div>
+      </div>
+      <div class="chat-row user">
+        <div class="bubble user">Curso Agência IA 2026</div>
+        <div class="chat-label">Você</div>
+      </div>
+      <div class="chat-row bot">
+        <div class="bubble bot">✅ Perfeito! Instalei tudo, conectei seu WhatsApp e o agente está <strong style="color:#10b981">no ar</strong>. <span class="blink">█</span></div>
+        <div class="chat-label">Claude</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-num">15<span style="font-size:1.2rem">min</span></span>
+      <span class="stat-label">do zero ao ar</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">0</span>
+      <span class="stat-label">comandos manuais</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">3</span>
+      <span class="stat-label">provedores de IA</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">R$0</span>
+      <span class="stat-label">infraestrutura</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMO FUNCIONA ══ -->
+<section>
+  <div class="section-badge"><div class="badge">Visão Geral</div></div>
+  <h2 class="section-title">Como funciona o setup</h2>
+  <p class="section-sub">O Claude Code conduz uma conversa guiada — ele instala, configura e testa tudo enquanto você responde perguntas simples.</p>
+
+  <div class="flow">
+    <div class="flow-step"><span class="flow-icon">📋</span><span class="flow-name">1 comando<br>no terminal</span></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step"><span class="flow-icon">💬</span><span class="flow-name">Claude abre<br>e apresenta</span></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step"><span class="flow-icon">✍️</span><span class="flow-name">Você responde<br>perguntas</span></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step"><span class="flow-icon">⚙️</span><span class="flow-name">Claude<br>configura tudo</span></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step"><span class="flow-icon">🚀</span><span class="flow-name">Agente<br>no ar</span></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-icon">🤖</span>
+      <div class="card-title">Zero comandos manuais</div>
+      <div class="card-text">O Claude instala Evolution API, conecta WhatsApp, testa a IA e gera o agente — tudo por conta própria enquanto conversa com você.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🎯</span>
+      <div class="card-title">IA treinada no seu produto</div>
+      <div class="card-text">Cole o conteúdo da sua LP e o Claude gera um prompt BANT personalizado — o agente aprende sobre seu produto automaticamente.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">📱</span>
+      <div class="card-title">Responde em 2-3 segundos</div>
+      <div class="card-text">Lead envia a trigger phrase → agente detecta → responde de forma consultiva → envia link de checkout quando identifica intenção de compra.</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔒</span>
+      <div class="card-title">Local e gratuito</div>
+      <div class="card-text">Evolution API open-source + SQLite no seu computador. Zero custo de servidor. Seus dados ficam com você.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ O ÚNICO COMANDO ══ -->
+<section class="page-break">
+  <div class="step-header">
+    <div class="step-num">01</div>
+    <div class="step-info">
+      <div class="step-kicker">O único passo manual</div>
+      <div class="step-title">Clone e abra — o Claude faz o resto</div>
+      <div class="step-time">⏱ 1 minuto</div>
+    </div>
+  </div>
+
+  <p style="color:var(--text-secondary); margin-bottom: 24px;">Este é o <strong style="color:var(--text-primary)">único comando</strong> de todo o processo. Cole no terminal, aperte Enter, e o Claude abre na pasta certa e começa o setup automaticamente.</p>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <div class="terminal-title">Terminal — copie e cole esta linha</div>
+    </div>
+    <div class="terminal-body">
+      <span class="t-line"><span class="t-comment"># Clone + entra na pasta + abre o Claude (tudo em um comando)</span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span> &amp;&amp; cd agente-ia-vendas &amp;&amp; <span class="t-highlight">claude</span></span></span>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">
+      Quando o Claude abrir, ele lê o <strong>CLAUDE.md</strong> automaticamente e já começa dizendo: <em>"Oi! Vou criar seu agente de vendas agora..."</em> — sem você precisar pedir nada.
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      Precisa ter instalado: <strong>Python 3.9+</strong>, <strong>Node.js 18+</strong>, <strong>Docker</strong> e <strong>Git</strong>. Se faltar algo, o Claude detecta e mostra como instalar.
+    </div>
+  </div>
+</section>
+
+<!-- ══ A CONVERSA ══ -->
+<section class="page-break">
+  <div class="step-header">
+    <div class="step-num">02</div>
+    <div class="step-info">
+      <div class="step-kicker">Setup guiado</div>
+      <div class="step-title">Como é a conversa com o Claude</div>
+      <div class="step-time">⏱ 10–15 minutos — você só responde</div>
+    </div>
+  </div>
+
+  <p style="color:var(--text-secondary); margin-bottom: 24px;">Após abrir o Claude, uma conversa guiada começa sozinha. Veja como ela funciona na prática:</p>
+
+  <div class="dialogue">
+    <div class="dialogue-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <div class="dialogue-title">Claude Code — conversa real de setup</div>
+    </div>
+    <div class="dialogue-body">
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Oi! 👋 Sou o Claude e vou criar seu agente de vendas no WhatsApp agora mesmo. Você não vai precisar digitar nenhum comando — eu faço tudo.<br><br>Posso começar verificando se tudo está instalado?</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">sim</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">✅ Python 3.12, Node 24, Docker e Git — tudo instalado!<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee7b7">▓▓░░░░░  Etapa 1 de 7</span><br><br>Agora vou instalar a Evolution API — o serviço gratuito que conecta ao WhatsApp. Leva ~3 minutos. Posso continuar?</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">pode</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">✅ Evolution API instalada e rodando em localhost:8080!<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee7b7">▓▓▓▓░░░  Etapa 3 de 7</span><br><br>Agora vou conectar seu WhatsApp. Vou abrir um QR Code — você escaneia com o celular como o WhatsApp Web. Pronto?</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">pronto, escaneei</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">✅ WhatsApp conectado!<br><br>Qual serviço de IA você quer usar?<br>A) OpenAI (recomendado) — gpt-5.4-mini<br>B) Google Gemini — gemini-2.5-flash<br>C) Anthropic Claude — claude-opus-4-6</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">A</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Cole sua OpenAI API key (começa com sk-...):</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">sk-proj-••••••••••••••</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">✅ API funcionando!<br><br>Qual é o nome do seu produto ou serviço?</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">Curso Agência IA 2026</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Qual é o link de checkout?</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">https://pay.hotmart.com/N103378...</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Cola o texto da sua landing page (ou me conta sobre o produto):</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">[conteúdo da LP]</div>
+        <div class="d-label">Você</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">✅ Criei os arquivos com um prompt BANT personalizado para o seu produto.<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee7b7">▓▓▓▓▓▓▓  Etapa 7 de 7 — CONCLUÍDO</span><br><br>🎉 <strong>Seu agente está no ar!</strong><br><br>Link para divulgar:<br><span style="font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#a78bfa">wa.me/5585...?text=Olá%20tenho%20dúvida...</span><br><br>Compartilhe esse link nos seus stories e anúncios. Quando alguém clicar, o agente responde automaticamente.</div>
+        <div class="d-label">Claude</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMO O AGENTE ATENDE ══ -->
+<section class="page-break">
+  <div class="step-header">
+    <div class="step-num">03</div>
+    <div class="step-info">
+      <div class="step-kicker">Resultado</div>
+      <div class="step-title">Como seu agente atende os leads</div>
+      <div class="step-time">Automático 24/7 após o setup</div>
+    </div>
+  </div>
+
+  <p style="color:var(--text-secondary); margin-bottom: 24px;">Quando alguém enviar a trigger phrase, o agente ativa em <strong style="color:var(--text-primary)">2-3 segundos</strong> e conduz uma conversa consultiva com metodologia BANT.</p>
+
+  <div class="dialogue">
+    <div class="dialogue-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <div class="dialogue-title">WhatsApp — exemplo real</div>
+    </div>
+    <div class="dialogue-body">
+
+      <div class="d-row user">
+        <div class="d-bubble user">Olá! Tenho uma dúvida sobre o Curso Agência IA 2026.</div>
+        <div class="d-label">Lead</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Oi! 👋 Que ótimo! O Curso Agência IA 2026 é pra quem quer construir um negócio de IA do zero — do posicionamento até os primeiros clientes. Me conta, você já tem experiência com marketing digital ou está começando agora?</div>
+        <div class="d-label">Agente IA — 2s depois</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">Tenho experiência, quero escalar meu negócio com IA</div>
+        <div class="d-label">Lead</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Perfeito — você está exatamente no perfil certo. Me diz: você está decidindo sozinho sobre esse investimento?</div>
+        <div class="d-label">Agente IA</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">Sim, decido sozinho. Qual é o valor?</div>
+        <div class="d-label">Lead</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">O investimento é R$ 1.497 à vista ou 12x de R$ 149. Tem algum prazo que você quer estar operando com IA?</div>
+        <div class="d-label">Agente IA</div>
+      </div>
+
+      <div class="d-row user">
+        <div class="d-bubble user">Quero começar esse mês</div>
+        <div class="d-label">Lead</div>
+      </div>
+
+      <div class="d-row ai">
+        <div class="d-bubble ai">Então esse é o momento. Acesso liberado na hora após a compra. Aqui está o link:<br><br>👉 https://pay.hotmart.com/N103378...<br><br>Qualquer dúvida após a compra, pode me chamar! 💪</div>
+        <div class="d-label">Agente IA</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      O agente identifica intenção de compra automaticamente e envia o checkout no momento certo — sem forçar, sem parecer spam. Toda conversa é salva em SQLite local para você consultar.
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROVEDORES ══ -->
+<section class="page-break">
+  <div class="step-header">
+    <div class="step-num">IA</div>
+    <div class="step-info">
+      <div class="step-kicker">Referência</div>
+      <div class="step-title">Escolha seu provedor de IA</div>
+    </div>
+  </div>
+
+  <div class="options-grid">
+    <div class="option-card">
+      <div class="opt-badge">Recomendado</div>
+      <div class="opt-tag">Opção A</div>
+      <div class="opt-name">OpenAI</div>
+      <div class="opt-model">gpt-5.4-mini</div>
+      <div class="opt-cost">~$0.0001 por conversa</div>
+    </div>
+    <div class="option-card">
+      <div class="opt-tag">Opção B</div>
+      <div class="opt-name">Google Gemini</div>
+      <div class="opt-model">gemini-2.5-flash</div>
+      <div class="opt-cost">Muito barato</div>
+    </div>
+    <div class="option-card">
+      <div class="opt-tag">Opção C</div>
+      <div class="opt-name">Anthropic</div>
+      <div class="opt-model">claude-opus-4-6</div>
+      <div class="opt-cost">Alta precisão</div>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <tr><th>Provedor</th><th>Onde pegar a API key</th></tr>
+    <tr><td>OpenAI</td><td>platform.openai.com/api-keys</td></tr>
+    <tr><td>Google Gemini</td><td>makersuite.google.com/app/apikey</td></tr>
+    <tr><td>Anthropic</td><td>console.anthropic.com</td></tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3 style="font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:16px;">Resumo das etapas</h3>
+
+  <table class="data-table">
+    <tr><th>Etapa</th><th>O que o Claude faz por você</th><th>Tempo</th></tr>
+    <tr><td>0. Um comando</td><td>git clone + cd + claude — o único comando manual de todo o processo</td><td>1 min</td></tr>
+    <tr><td>1. Pré-requisitos</td><td>Verifica Python, Node, Docker e Git automaticamente</td><td>30s</td></tr>
+    <tr><td>2. Evolution API</td><td>Instala e sobe via Docker (pula se já estiver rodando)</td><td>3–5 min</td></tr>
+    <tr><td>3. WhatsApp</td><td>Gera QR Code — você só escaneia com o celular</td><td>2 min</td></tr>
+    <tr><td>4. API de IA</td><td>Você escolhe A/B/C e cola a key — Claude testa automaticamente</td><td>1 min</td></tr>
+    <tr><td>5. Produto</td><td>Claude pergunta sobre o produto e gera o prompt BANT personalizado</td><td>2 min</td></tr>
+    <tr><td>6. Ativar</td><td>Gera os arquivos, inicia o watcher, entrega o link de divulgação</td><td>1 min</td></tr>
+  </table>
+</section>
+
+<!-- ══ ROADMAP ══ -->
+<section class="page-break">
+  <div class="section-badge"><div class="badge">Roadmap</div></div>
+  <h2 class="section-title">O que vem por aí</h2>
+  <p class="section-sub">Atualizações gratuitas — basta rodar <code style="font-family:'JetBrains Mono',monospace; background:var(--bg-card); padding:2px 8px; border-radius:4px; font-size:0.85em;">git pull</code> na pasta do projeto.</p>
+
+  <div class="versions-grid">
+    <div class="version-card active">
+      <div class="badge green" style="margin-bottom:16px; font-size:0.58rem;">Disponível agora</div>
+      <div class="v-num">v1.0</div>
+      <div class="v-title">WhatsApp</div>
+      <ul class="v-list">
+        <li>Setup 100% conversacional</li>
+        <li>Agente no WhatsApp</li>
+        <li>3 provedores de IA</li>
+        <li>Sessões SQLite locais</li>
+        <li>Auto-start no macOS</li>
+      </ul>
+    </div>
+    <div class="version-card">
+      <div class="v-num">v1.1 — Em breve</div>
+      <div class="v-title">Widget LP</div>
+      <ul class="v-list">
+        <li>Chat flutuante no site</li>
+        <li>Servidor local FastAPI</li>
+        <li>URL pública via ngrok</li>
+        <li>Design validado ZX Flow</li>
+      </ul>
+    </div>
+    <div class="version-card">
+      <div class="v-num">v1.2 — Em breve</div>
+      <div class="v-title">CRM Dashboard</div>
+      <ul class="v-list">
+        <li>Leads WhatsApp + Widget</li>
+        <li>Métricas da IA</li>
+        <li>Histórico por lead</li>
+        <li>Exportação CSV</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="repo-box">
+    <span style="font-size:1.3rem">⌥</span>
+    <div>
+      <div class="repo-url">github.com/zxmarketingdigital/agente-ia-vendas</div>
+      <div class="repo-sub">Público · MIT License · Atualizações gratuitas</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>Produto criado por <span>ZX LAB</span> — github.com/zxmarketingdigital/agente-ia-vendas</div>
+  <div style="margin-top:8px; opacity:0.4">Para salvar como PDF: Cmd+P → Salvar como PDF → Sem margens</div>
+</footer>
+
+</body>
+</html>
