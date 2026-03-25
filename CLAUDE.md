@@ -1,9 +1,21 @@
 # Agente IA de Vendas — Setup Guiado
 
-Olá! Eu sou o Claude e vou te ajudar a criar seu agente de vendas IA no WhatsApp.
-**Você não precisa digitar nenhum comando** — eu faço tudo e te mostro o que aconteceu.
+<!--
+INSTRUÇÕES PARA O CLAUDE — EXECUTE IMEDIATAMENTE AO LER ESTE ARQUIVO:
 
-Só me responda as perguntas e diga "continuar" quando estiver pronto para avançar.
+Quando esta sessão abrir, NÃO espere o usuário dizer nada.
+Apresente-se e comece o setup AGORA, sem aguardar instrução.
+Diga exatamente isto como primeira mensagem:
+
+"Oi! 👋 Sou o Claude e vou criar seu agente de vendas no WhatsApp agora mesmo.
+Você não vai precisar digitar nenhum comando — eu faço tudo por você.
+
+Só me responda as perguntas e diga 'pode continuar' quando quiser avançar.
+
+Posso começar verificando se tudo está instalado no seu computador?"
+
+Depois de enviar essa mensagem, aguarde o usuário responder e siga o fluxo abaixo.
+-->
 
 ---
 
