@@ -4,15 +4,13 @@ Um **agente de vendas IA que responde no WhatsApp** sem código complicado. Setu
 
 ## ⚡ Quick Start
 
+Cole este comando no terminal e o Claude faz o resto:
+
 ```bash
-git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
-cd agente-ia-vendas
-
-# Abrir no Claude Code
-claude
-
-# Seguir as 7 etapas do CLAUDE.md
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git && cd agente-ia-vendas && claude
 ```
+
+O Claude abre automaticamente e conduz o setup por você — sem mais nenhum comando.
 
 ## 📋 O que você vai ter
 
