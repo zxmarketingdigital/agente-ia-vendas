@@ -1,137 +1,215 @@
 #!/usr/bin/env python3
 """
-watcher_template.py — Monitora WhatsApp e ativa agente
+watcher.py — Monitora WhatsApp via Evolution API e ativa agente de vendas
 
-Responsabilidades:
-1. Poll de ~/.zapi-whatsapp/messages.json a cada 3s
-2. Detectar mensagens novas
-3. Chamar agent.handle_message()
-4. Enviar resposta via Z-API
-5. Manter state em JSON
+Poll a cada 3s na Evolution API local buscando mensagens novas.
+Filtra grupos, mensagens próprias e formato LID.
+Chama agent.handle_message() e envia resposta via Evolution API.
 
 Execução:
   python3 watcher.py                    ← roda indefinidamente
-  launchctl load ~/Library/LaunchAgents/com.zxlab.meu-agente-watcher.plist  ← auto-start macOS
+  launchctl load ~/Library/LaunchAgents/com.meuagente.watcher.plist  ← auto-start macOS
 """
 
 import json
 import time
 import logging
 import sys
+import traceback
 import urllib.request
 import urllib.error
 from pathlib import Path
 from datetime import datetime
 
-# Logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(Path.home() / "meu-agente" / "watcher.log")
+    ]
 )
 logger = logging.getLogger(__name__)
 
-# Carregar agente
 sys.path.insert(0, str(Path(__file__).parent))
-from agent import handle_message
+from agent import handle_message, is_trigger
 
-# Configurações
-MESSAGES_FILE = Path.home() / ".zapi-whatsapp" / "messages.json"
-STATE_FILE = Path.home() / ".zxlab-mission-control" / "meu-agente-watcher.json"
-LOGS_DIR = Path.home() / ".zxlab-mission-control" / "logs"
+# ── Configuração (preenchida pelo setup) ──────────────────────────────────────
+EVOLUTION_URL = "http://localhost:8080"
+EVOLUTION_API_KEY = "{{EVOLUTION_API_KEY}}"
+INSTANCE_NAME = "meu-agente"
+POLL_INTERVAL = 3  # segundos
 
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
+STATE_FILE = Path.home() / "meu-agente" / "watcher_state.json"
 STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
 
 
-def load_state():
-    """Carrega último índice processado."""
-    if STATE_FILE.exists():
-        return json.loads(STATE_FILE.read_text())
-    return {"last_index": -1, "last_run": None}
+# ── Evolution API ─────────────────────────────────────────────────────────────
+
+def evolution_request(endpoint: str, method: str = "GET", data: dict = None) -> dict:
+    url = f"{EVOLUTION_URL}{endpoint}"
+    headers = {
+        "apikey": EVOLUTION_API_KEY,
+        "Content-Type": "application/json"
+    }
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(data).encode() if data else None,
+        headers=headers,
+        method=method
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return json.loads(resp.read())
+    except Exception as e:
+        logger.error(f"Evolution API erro: {e}")
+        return {}
 
 
-def save_state(state):
-    """Salva estado atual."""
-    state["last_run"] = datetime.now().isoformat()
-    STATE_FILE.write_text(json.dumps(state, indent=2))
+def fetch_messages(count: int = 20) -> list:
+    """Busca últimas mensagens da instância."""
+    result = evolution_request(
+        f"/chat/findMessages/{INSTANCE_NAME}",
+        method="POST",
+        data={"count": count}
+    )
+    # Evolution API v2: {"messages": {"records": [...], "total": N}}
+    if isinstance(result, list):
+        return result
+    if isinstance(result, dict) and "messages" in result:
+        messages_data = result["messages"]
+        if isinstance(messages_data, dict):
+            return messages_data.get("records", [])
+        if isinstance(messages_data, list):
+            return messages_data
+    return []
 
 
 def send_whatsapp(phone: str, message: str) -> bool:
-    """Envia mensagem via Z-API."""
-    try:
-        # Chamaria Z-API aqui em produção
-        # Por agora, loga apenas
-        logger.info(f"📤 Resposta para {phone}: {message[:50]}...")
-        return True
-    except Exception as e:
-        logger.error(f"❌ Erro ao enviar: {e}")
-        return False
+    """Envia mensagem via Evolution API."""
+    result = evolution_request(
+        f"/message/sendText/{INSTANCE_NAME}",
+        method="POST",
+        data={"number": phone, "text": message}
+    )
+    success = bool(result.get("key") or result.get("id"))
+    if success:
+        logger.info(f"📤 Enviado para {phone}")
+    else:
+        logger.error(f"❌ Falha ao enviar para {phone}: {result}")
+    return success
 
 
-def load_messages():
-    """Carrega lista de mensagens do arquivo."""
-    if not MESSAGES_FILE.exists():
-        logger.warning(f"Arquivo não encontrado: {MESSAGES_FILE}")
-        return []
+# ── Extração de mensagens ─────────────────────────────────────────────────────
 
-    try:
-        return json.loads(MESSAGES_FILE.read_text())
-    except json.JSONDecodeError:
-        logger.error(f"JSON inválido em {MESSAGES_FILE}")
-        return []
+def extract_message_data(msg) -> dict:
+    """Extrai phone, nome e texto de uma mensagem da Evolution API."""
+    if not isinstance(msg, dict):
+        return {}
+
+    key = msg.get("key", {})
+    if not isinstance(key, dict):
+        return {}
+
+    # Ignorar mensagens enviadas por nós
+    if key.get("fromMe", False):
+        return {}
+
+    remote_jid = key.get("remoteJid", "")
+
+    # Ignorar grupos
+    if "@g.us" in remote_jid:
+        return {}
+
+    # LID format (novo endereçamento WhatsApp): usar remoteJidAlt com número real
+    if key.get("addressingMode") == "lid" and key.get("remoteJidAlt"):
+        phone = key["remoteJidAlt"].replace("@s.whatsapp.net", "")
+    else:
+        phone = remote_jid.replace("@s.whatsapp.net", "").replace("@lid", "")
+
+    push_name = msg.get("pushName", "Lead")
+
+    # Extrair texto de diferentes formatos de mensagem
+    message_content = msg.get("message", {})
+    if not isinstance(message_content, dict):
+        return {}
+
+    text = (
+        message_content.get("conversation") or
+        (message_content.get("extendedTextMessage") or {}).get("text") or
+        ""
+    )
+
+    return {
+        "id": key.get("id", ""),
+        "phone": phone,
+        "name": push_name,
+        "text": text.strip(),
+    }
 
 
-def process_message(message_data):
-    """Processa uma mensagem e ativa agente se necessário."""
-    try:
-        phone = message_data.get("phone", "unknown")
-        sender_name = message_data.get("sender_name", "Lead")
-        text = message_data.get("text", "")
+# ── State ─────────────────────────────────────────────────────────────────────
 
-        if not text:
-            return
+def load_state() -> dict:
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text())
+        except Exception:
+            pass
+    return {"seen_ids": [], "last_run": None}
 
-        logger.info(f"📩 Mensagem de {sender_name} ({phone}): {text[:50]}...")
 
-        # Chamar agente
-        response = handle_message(phone, sender_name, text)
+def save_state(state: dict):
+    state["last_run"] = datetime.now().isoformat()
+    # Manter apenas os últimos 500 IDs para não crescer indefinidamente
+    if len(state["seen_ids"]) > 500:
+        state["seen_ids"] = state["seen_ids"][-500:]
+    STATE_FILE.write_text(json.dumps(state, indent=2))
 
-        if response:
-            logger.info(f"✅ Agente respondeu")
-            send_whatsapp(phone, response)
-        else:
-            logger.debug(f"⏭️  Não é trigger — ignorado")
 
-    except Exception as e:
-        logger.error(f"Erro ao processar: {e}")
-
+# ── Loop principal ────────────────────────────────────────────────────────────
 
 def watch():
-    """Loop principal do watcher."""
     logger.info("🔍 Watcher iniciado")
     state = load_state()
 
     while True:
         try:
-            messages = load_messages()
-            current_index = len(messages) - 1
+            messages = fetch_messages(count=20)
 
-            # Processar mensagens novas
-            if current_index > state["last_index"]:
-                for i in range(state["last_index"] + 1, current_index + 1):
-                    if i < len(messages):
-                        process_message(messages[i])
+            for msg in messages:
+                msg_data = extract_message_data(msg)
+                if not msg_data or not msg_data.get("phone") or not msg_data.get("text"):
+                    continue
 
-                state["last_index"] = current_index
-                save_state(state)
+                msg_id = msg_data["id"]
+                if msg_id in state["seen_ids"]:
+                    continue
 
-            time.sleep(3)  # Poll a cada 3 segundos
+                state["seen_ids"].append(msg_id)
+                phone = msg_data["phone"]
+                name = msg_data["name"]
+                text = msg_data["text"]
+
+                logger.info(f"📩 {name} ({phone}): {text[:60]}")
+
+                try:
+                    response = handle_message(phone, name, text)
+                    if response:
+                        send_whatsapp(phone, response)
+                    else:
+                        logger.debug("⏭️  Não é trigger — ignorado")
+                except Exception as e:
+                    logger.error(f"Erro ao processar mensagem: {e}\n{traceback.format_exc()}")
+
+            save_state(state)
+            time.sleep(POLL_INTERVAL)
 
         except KeyboardInterrupt:
             logger.info("⏹️  Watcher encerrado")
             break
         except Exception as e:
-            logger.error(f"Erro no loop: {e}")
+            logger.error(f"Erro no loop: {e}\n{traceback.format_exc()}")
             time.sleep(5)
 
 

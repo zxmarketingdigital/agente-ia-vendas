@@ -56,7 +56,11 @@ def main():
     print(f"\n1️⃣  Verificando instância: {instance_name}")
     existing = call_api(f"/instance/fetchInstances", method="GET")
     instances = existing if isinstance(existing, list) else []
-    instance_names = [i.get("instance", {}).get("instanceName", "") for i in instances]
+    # Evolution API v2: campo "name" direto; v1: dentro de "instance.instanceName"
+    instance_names = [
+        i.get("name", "") or i.get("instance", {}).get("instanceName", "")
+        for i in instances
+    ]
 
     if instance_name in instance_names:
         print(f"   ✅ Instância já existe: {instance_name}")
@@ -76,11 +80,14 @@ def main():
     print("\n2️⃣  Gerando QR Code...")
     qr_result = call_api(f"/instance/connect/{instance_name}", method="GET")
 
-    qr_data = (
-        qr_result.get("base64") or
-        qr_result.get("qrcode", {}).get("base64") if isinstance(qr_result.get("qrcode"), dict) else
-        qr_result.get("qrcode")
-    )
+    # Evolution API v2: base64 direto; v1: dentro de "qrcode.base64" ou string
+    qr_data = qr_result.get("base64")
+    if not qr_data:
+        qrcode_field = qr_result.get("qrcode")
+        if isinstance(qrcode_field, dict):
+            qr_data = qrcode_field.get("base64")
+        elif isinstance(qrcode_field, str):
+            qr_data = qrcode_field
 
     if qr_data:
         # Salvar QR Code como imagem PNG e abrir no visualizador
