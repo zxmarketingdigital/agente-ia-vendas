@@ -3,31 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agente IA de Vendas — ZX LAB</title>
+<title>Agente IA de Vendas — ArgosZap</title>
+<link rel="icon" type="image/png" href="assets/argoszap-favicon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: #16161f;
-  --bg-card-hover: #1a1a25;
-  --border: #1e1e2e;
+  --bg-primary: #0A100D;
+  --bg-secondary: #121C17;
+  --bg-card: #16241F;
+  --bg-card-hover: #1C2E27;
+  --border: #1E322B;
   --border-light: rgba(255,255,255,0.06);
-  --text-primary: #e8e8ed;
-  --text-secondary: #8b8b9e;
-  --text-muted: #5a5a6e;
-  --accent-purple: #8b5cf6;
-  --accent-blue: #6366f1;
-  --accent-cyan: #22d3ee;
-  --accent-green: #10b981;
+  --text-primary: #EAF3EF;
+  --text-secondary: #8FA39C;
+  --text-muted: #5C6D67;
+  --accent-purple: #197B5C;
+  --accent-blue: #135C45;
+  --accent-cyan: #34C397;
+  --accent-green: #34C397;
   --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
-  --accent-orange: #f97316;
-  --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
-  --gradient-hero: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #22d3ee 100%);
-  --gradient-card: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.04));
+  --accent-orange: #f59e0b;
+  --gradient-primary: linear-gradient(135deg, #135C45, #197B5C, #34C397);
+  --gradient-hero: linear-gradient(135deg, #135C45 0%, #197B5C 30%, #34C397 100%);
+  --gradient-card: linear-gradient(135deg, rgba(25,123,92,0.08), rgba(52,195,151,0.04));
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,9 +56,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(99,102,241,0.1);
-  border: 1px solid rgba(99,102,241,0.3);
-  color: #a78bfa;
+  background: rgba(25,123,92,0.12);
+  border: 1px solid rgba(25,123,92,0.35);
+  color: #6FE3B9;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -68,9 +69,9 @@ body {
 }
 
 .badge.green {
-  background: rgba(16,185,129,0.1);
-  border-color: rgba(16,185,129,0.3);
-  color: #34d399;
+  background: rgba(52,195,151,0.1);
+  border-color: rgba(52,195,151,0.3);
+  color: #34C397;
 }
 
 /* ── NAV ── */
@@ -82,7 +83,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(10,10,15,0.8);
+  background: rgba(10,16,13,0.8);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
 }
@@ -122,17 +123,17 @@ nav {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(34,211,238,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 40% at 20% 60%, rgba(139,92,246,0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(25,123,92,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(52,195,151,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 20% 60%, rgba(52,195,151,0.06) 0%, transparent 50%);
 }
 
 .hero-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(25,123,92,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25,123,92,0.04) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
@@ -167,7 +168,7 @@ nav {
   width: 100%;
   margin: 0 auto 56px;
   overflow: hidden;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.1);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(52,195,151,0.1);
 }
 
 .mockup-bar {
@@ -215,7 +216,7 @@ nav {
 }
 
 .bubble.user {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #135C45, #197B5C);
   color: #fff;
   border-radius: 14px 4px 14px 14px;
 }
@@ -304,7 +305,7 @@ section:last-of-type { border-bottom: none; }
 }
 
 .card:hover {
-  border-color: rgba(99,102,241,0.3);
+  border-color: rgba(25,123,92,0.3);
   background: var(--bg-card-hover);
 }
 
@@ -376,10 +377,10 @@ section:last-of-type { border-bottom: none; }
 }
 
 .t-comment { color: #6e7681; }
-.t-prompt { color: #10b981; }
+.t-prompt { color: #34C397; }
 .t-cmd { color: #e6edf3; }
 .t-url { color: #79c0ff; }
-.t-highlight { color: #a78bfa; font-weight: 600; }
+.t-highlight { color: #6FE3B9; font-weight: 600; }
 .t-line { display: block; }
 
 /* ── DIALOGUE ── */
@@ -433,9 +434,9 @@ section:last-of-type { border-bottom: none; }
 }
 
 .d-bubble.user {
-  background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3));
-  color: #c4b5fd;
-  border: 1px solid rgba(139,92,246,0.3);
+  background: linear-gradient(135deg, rgba(25,123,92,0.3), rgba(52,195,151,0.3));
+  color: #6FE3B9;
+  border: 1px solid rgba(52,195,151,0.3);
   border-radius: 14px 4px 14px 14px;
   font-style: italic;
 }
@@ -461,9 +462,9 @@ section:last-of-type { border-bottom: none; }
 }
 
 .callout.success {
-  background: rgba(16,185,129,0.06);
-  border-color: #10b981;
-  color: #6ee7b7;
+  background: rgba(52,195,151,0.06);
+  border-color: #34C397;
+  color: #6FE3B9;
 }
 
 .callout.warning {
@@ -473,9 +474,9 @@ section:last-of-type { border-bottom: none; }
 }
 
 .callout.info {
-  background: rgba(99,102,241,0.06);
-  border-color: #6366f1;
-  color: #a5b4fc;
+  background: rgba(25,123,92,0.06);
+  border-color: #135C45;
+  color: #6FE3B9;
 }
 
 .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
@@ -522,8 +523,8 @@ section:last-of-type { border-bottom: none; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent-green);
-  border: 1px solid rgba(16,185,129,0.3);
-  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(52,195,151,0.3);
+  background: rgba(52,195,151,0.08);
   padding: 3px 10px;
   border-radius: 100px;
 }
@@ -586,9 +587,9 @@ section:last-of-type { border-bottom: none; }
 }
 
 .version-card.active {
-  border-color: rgba(139,92,246,0.4);
-  background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04));
-  box-shadow: 0 0 40px rgba(139,92,246,0.08);
+  border-color: rgba(52,195,151,0.4);
+  background: linear-gradient(135deg, rgba(25,123,92,0.06), rgba(52,195,151,0.04));
+  box-shadow: 0 0 40px rgba(52,195,151,0.08);
 }
 
 .v-num {
@@ -629,8 +630,8 @@ section:last-of-type { border-bottom: none; }
   align-items: center;
   gap: 16px;
   padding: 18px 24px;
-  background: rgba(99,102,241,0.06);
-  border: 1px solid rgba(99,102,241,0.2);
+  background: rgba(25,123,92,0.06);
+  border: 1px solid rgba(25,123,92,0.2);
   border-radius: 10px;
   margin: 20px 0;
 }
@@ -658,8 +659,8 @@ section:last-of-type { border-bottom: none; }
 
 .step-num {
   min-width: 52px; height: 52px;
-  background: rgba(99,102,241,0.1);
-  border: 1px solid rgba(99,102,241,0.3);
+  background: rgba(25,123,92,0.1);
+  border: 1px solid rgba(25,123,92,0.3);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -708,7 +709,7 @@ section:last-of-type { border-bottom: none; }
   .hero-bg, .hero-grid { display: none; }
   .page-break { page-break-before: always; }
   .card, .option-card, .version-card { break-inside: avoid; }
-  .gradient-text { -webkit-text-fill-color: #6366f1; }
+  .gradient-text { -webkit-text-fill-color: #135C45; }
 }
 
 /* ── FOOTER ── */
@@ -757,7 +758,7 @@ footer span { color: var(--accent-purple); }
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo"><span>ZX</span> LAB</div>
+  <div class="nav-logo"><span>Argos</span>Zap</div>
   <div class="nav-right mono">Agente IA de Vendas — v1.0</div>
 </nav>
 
@@ -799,7 +800,7 @@ footer span { color: var(--accent-purple); }
         <div class="chat-label">Você</div>
       </div>
       <div class="chat-row bot">
-        <div class="bubble bot">✅ Perfeito! Instalei tudo, conectei seu WhatsApp e o agente está <strong style="color:#10b981">no ar</strong>. <span class="blink">█</span></div>
+        <div class="bubble bot">✅ Perfeito! Instalei tudo, conectei seu WhatsApp e o agente está <strong style="color:#34C397">no ar</strong>. <span class="blink">█</span></div>
         <div class="chat-label">Claude</div>
       </div>
     </div>
@@ -966,7 +967,7 @@ footer span { color: var(--accent-purple); }
       </div>
 
       <div class="d-row ai">
-        <div class="d-bubble ai">✅ Python 3.12, Node 24, Docker e Git — tudo instalado!<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee7b7">▓▓░░░░░  Etapa 1 de 7</span><br><br>Agora vou instalar a Evolution API — o serviço gratuito que conecta ao WhatsApp. Leva ~3 minutos. Posso continuar?</div>
+        <div class="d-bubble ai">✅ Python 3.12, Node 24, Docker e Git — tudo instalado!<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6FE3B9">▓▓░░░░░  Etapa 1 de 7</span><br><br>Agora vou instalar a Evolution API — o serviço gratuito que conecta ao WhatsApp. Leva ~3 minutos. Posso continuar?</div>
         <div class="d-label">Claude</div>
       </div>
 
@@ -976,7 +977,7 @@ footer span { color: var(--accent-purple); }
       </div>
 
       <div class="d-row ai">
-        <div class="d-bubble ai">✅ Evolution API instalada e rodando em localhost:8080!<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee7b7">▓▓▓▓░░░  Etapa 3 de 7</span><br><br>Agora vou conectar seu WhatsApp. Vou abrir um QR Code — você escaneia com o celular como o WhatsApp Web. Pronto?</div>
+        <div class="d-bubble ai">✅ Evolution API instalada e rodando em localhost:8080!<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6FE3B9">▓▓▓▓░░░  Etapa 3 de 7</span><br><br>Agora vou conectar seu WhatsApp. Vou abrir um QR Code — você escaneia com o celular como o WhatsApp Web. Pronto?</div>
         <div class="d-label">Claude</div>
       </div>
 
@@ -1036,7 +1037,7 @@ footer span { color: var(--accent-purple); }
       </div>
 
       <div class="d-row ai">
-        <div class="d-bubble ai">✅ Criei os arquivos com um prompt BANT personalizado para o seu produto.<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee7b7">▓▓▓▓▓▓▓  Etapa 7 de 7 — CONCLUÍDO</span><br><br>🎉 <strong>Seu agente está no ar!</strong><br><br>Link para divulgar:<br><span style="font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#a78bfa">wa.me/5585...?text=Olá%20tenho%20dúvida...</span><br><br>Compartilhe esse link nos seus stories e anúncios. Quando alguém clicar, o agente responde automaticamente.</div>
+        <div class="d-bubble ai">✅ Criei os arquivos com um prompt BANT personalizado para o seu produto.<br><br><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6FE3B9">▓▓▓▓▓▓▓  Etapa 7 de 7 — CONCLUÍDO</span><br><br>🎉 <strong>Seu agente está no ar!</strong><br><br>Link para divulgar:<br><span style="font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#34C397">wa.me/5585...?text=Olá%20tenho%20dúvida...</span><br><br>Compartilhe esse link nos seus stories e anúncios. Quando alguém clicar, o agente responde automaticamente.</div>
         <div class="d-label">Claude</div>
       </div>
 
@@ -1215,7 +1216,7 @@ footer span { color: var(--accent-purple); }
   <div class="callout info">
     <span class="callout-icon">💬</span>
     <div class="callout-body">
-      Não resolveu? Cole o erro na <strong>IA de Suporte</strong>: <a href="https://suporte.zxlab.com.br/hub" style="color:var(--accent-amber); text-decoration:underline"><strong>suporte.zxlab.com.br/hub</strong></a>
+      Não resolveu? Cole o erro na <strong>IA de Suporte</strong>: <a href="https://argoszap.com/suporte" style="color:var(--accent-amber); text-decoration:underline"><strong>argoszap.com/suporte</strong></a>
     </div>
   </div>
 </section>
@@ -1274,14 +1275,14 @@ footer span { color: var(--accent-purple); }
     <div class="callout-body">
       <strong>Este guia é a visão geral.</strong> O passo a passo completo, com os prints de cada
       tela e as instruções de instalação por sistema operacional, fica na página oficial:
-      <a href="https://zxlab.com.br/instalar-agente-ia" style="color:var(--accent-amber); text-decoration:underline"><strong>zxlab.com.br/instalar-agente-ia</strong></a>. E o roteiro que a IA segue durante o
+      <a href="https://argoszap.com/instalar-agente-ia" style="color:var(--accent-amber); text-decoration:underline"><strong>argoszap.com/instalar-agente-ia</strong></a>. E o roteiro que a IA segue durante o
       setup é o <code>SETUP.md</code> do repositório — é lá que qualquer correção é feita.
     </div>
   </div>
 </section>
 
 <footer>
-  <div>Produto criado por <span>ZX LAB</span> — github.com/zxmarketingdigital/agente-ia-vendas</div>
+  <div>Distribuído por <span>ArgosZap</span> — github.com/zxmarketingdigital/agente-ia-vendas</div>
   <div style="margin-top:8px; opacity:0.4">Para salvar como PDF: Cmd+P → Salvar como PDF → Sem margens</div>
 </footer>
 

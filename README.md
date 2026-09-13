@@ -170,7 +170,7 @@ Travou? A tabela **"Problemas que travam o aluno ANTES do setup começar"** no f
 [SETUP.md](SETUP.md) cobre os erros mais comuns (console do Node, PowerShell bloqueando
 scripts no Windows, `EACCES` do npm no Mac, permissões de pasta do macOS).
 
-Se não resolver, cole o erro na [IA de Suporte](https://suporte.zxlab.com.br/hub).
+Se não resolver, cole o erro na [IA de Suporte](https://argoszap.com/suporte).
 
 ## 📄 Licença
 
@@ -178,5 +178,5 @@ MIT — use livremente em produção.
 
 ---
 
-**Feito por [ZX LAB](https://zxlab.com.br)**
+**Feito por [ArgosZap](https://argoszap.com)**
 Março 2026 | v1.0
