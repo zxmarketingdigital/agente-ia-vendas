@@ -166,13 +166,28 @@ Mostre ao usuário apenas: "✅ Criei os arquivos com as configurações do seu 
 **Execute:** `python3 setup/test_agent.py`
 
 Se passar:
-1. Inicie o watcher: `python3 ~/meu-agente/watcher.py &`
+1. Inicie o watcher: `python3 ~/meu-agente/watcher.py &` (Windows: `python` no lugar de `python3`)
 2. Confirme que está rodando
-3. Configure auto-start no macOS. Leia `templates/whatsapp/launchagent_template.plist`, substitua `{{HOME}}` pelo diretório home do usuário (rode `echo $HOME` para obter) e salve o resultado:
+3. Configure o auto-start — o mecanismo varia por sistema operacional:
+
+   **macOS:** leia `templates/whatsapp/launchagent_template.plist`, substitua `{{HOME}}` pelo
+   diretório home do usuário (rode `echo $HOME` para obter) e salve o resultado:
    ```bash
    # depois de substituir {{HOME}} e salvar em ~/Library/LaunchAgents/com.meuagente.watcher.plist:
    launchctl load ~/Library/LaunchAgents/com.meuagente.watcher.plist
    ```
+
+   **Windows:** leia `templates/whatsapp/watcher_supervisor_template.ps1`, substitua `{{HOME}}`
+   pelo diretório do usuário (rode `echo %USERPROFILE%` para obter) e salve o resultado em
+   `%USERPROFILE%\meu-agente\watcher_supervisor.ps1`. Depois registre a tarefa agendada
+   (equivalente ao `launchctl load` do macOS — dispara ao fazer logon, sem precisar de admin):
+   ```powershell
+   schtasks /create /tn "MeuAgenteWatcher" /tr "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"%USERPROFILE%\meu-agente\watcher_supervisor.ps1\"" /sc onlogon /rl limited /f
+   schtasks /run /tn "MeuAgenteWatcher"
+   ```
+   O script substitui o `python3 ... &` do passo 1 — ele já inicia o watcher (e verifica o
+   Evolution API) sozinho, e o reinicia automaticamente se cair. Depois de registrar a tarefa,
+   confirme que está rodando conferindo `%USERPROFILE%\meu-agente\watcher-supervisor.log`.
 
 ---
 
