@@ -125,8 +125,11 @@ winget install Git.Git
 
 - **macOS / Windows:** baixe o Docker Desktop em
   [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop).
-  No Windows o próprio instalador configura o WSL2 por baixo — você não precisa rodar
-  `wsl --install` na mão.
+  Na maioria das máquinas Windows o próprio instalador já configura o WSL2 por baixo —
+  mas em instalações limpas (Windows que nunca teve o recurso WSL ativado) o Docker
+  Desktop abre e mostra a própria tela **"WSL is not installed"** pedindo pra você rodar
+  `wsl --install` na mão. É comum, é rápido de resolver (veja o aviso abaixo) e não
+  precisa reinstalar nada.
 - **Linux:** siga o guia oficial da sua distribuição em
   [docs.docker.com/engine/install](https://docs.docker.com/engine/install/) — ele já
   instala o Docker **e** o plugin `docker compose` juntos. Depois rode
@@ -144,7 +147,21 @@ winget install Git.Git
 > Windows, abra o app Docker Desktop e espere o ícone da baleia ficar estável antes de
 > seguir. Instalado mas fechado faz a Etapa 2 falhar com um erro confuso.
 
-> ⚠️ **Se aparecer “Virtualization support not detected”, o Docker está instalado mas não
+> ⚠️ **Se aparecer "WSL is not installed" / "There was a problem with WSL" (Windows), NÃO
+> é problema de BIOS — é só o recurso WSL nunca ter sido ativado nesse Windows.** É o erro
+> mais comum de quem está instalando pela primeira vez. Resolve em 3 passos, sem mexer em
+> BIOS/UEFI:
+> 1. Abra o **PowerShell como Administrador** (clique direito no ícone → "Executar como
+>    Administrador").
+> 2. Rode `wsl --install` (se já tiver o WSL mas desatualizado, use `wsl --update`).
+> 3. **Reinicie o computador** e abra o Docker Desktop de novo — espere o ícone da baleia
+>    ficar estável.
+>
+> Só volte pro passo de BIOS abaixo se o Docker Desktop mostrar especificamente
+> **"Virtualization support not detected"** (mensagem diferente, sem falar de WSL) — aí
+> sim é a virtualização do processador que está desligada.
+
+> ⚠️ **Se aparecer "Virtualization support not detected", o Docker está instalado mas não
 > consegue iniciar.** Reinstalar não resolve: no Windows, reinicie e entre na BIOS/UEFI
 > (F2, F10, DEL ou ESC), ative **Intel VT-x**, **AMD-V** ou **SVM Mode** em Advanced,
 > CPU Configuration ou Security, salve e reinicie. Depois, no PowerShell como Administrador,

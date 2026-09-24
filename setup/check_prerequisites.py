@@ -254,6 +254,7 @@ def main():
     # --- Docker precisa estar ABERTO, nao so instalado ----------------------
     docker_parado = False
     docker_sem_virtualizacao = False
+    docker_wsl_apenas = False
     compose_ausente = False
     if not any(cmd == "docker" for _, cmd in ausentes):
         docker_ok, docker_saida = docker_esta_rodando()
@@ -269,12 +270,33 @@ def main():
             docker_saida_normalizada = unicodedata.normalize(
                 "NFKD", docker_saida or ""
             ).encode("ascii", "ignore").decode("ascii").lower()
+            # "wsl" sozinho (sem termo de virtualizacao/hypervisor junto) e' o caso
+            # mais comum e mais simples: Windows limpo que nunca ativou o WSL. NAO
+            # e' problema de BIOS — resolve com `wsl --install` + reiniciar. So e'
+            # tratado como "falta virtualizacao" (BIOS) quando o texto menciona
+            # explicitamente virtualizacao/hypervisor/hyper-v/vmx (achado real:
+            # varios compradores caindo na tela "WSL is not installed" do Docker
+            # Desktop e o script mandando eles pra BIOS por engano — 22-23/09/26).
+            # NOTA (luna-review, 24/09/26, MEDIO aceito — nao ha caso real observado):
+            # "hyperv"/"hyper-v" podem, em teoria, vir de um erro de COMPONENTE do Windows
+            # ausente (ex.: HCS_E_HYPERV_NOT_INSTALLED) em vez de virtualizacao desligada na
+            # BIOS — nesse caso o passo 3 da instrucao de BIOS (`wsl --install` no PowerShell
+            # Admin + reiniciar) ainda resolve a maioria das vezes, porque reativa o
+            # componente Hyper-V/Virtual Machine Platform junto. Nenhum dos 5 compradores do
+            # 15M com defeito de Docker nesta auditoria (20-23/09/26) teve esse texto — todos
+            # foram "WSL is not installed"/"There was a problem with WSL" puro. Mantido assim
+            # de proposito (ver rule "escopo-sem-trava-inventada": nao ramificar por erro
+            # hipotetico sem evidencia real); se aparecer caso real com HCS_E_HYPERV_*,
+            # criar um terceiro branch dedicado.
+            termos_virtualizacao = (
+                "virtualization", "virtualisation", "hypervisor",
+                "hyper-v", "hyperv", "vmx",
+            )
             docker_sem_virtualizacao = any(
-                termo in docker_saida_normalizada
-                for termo in (
-                    "virtualization", "virtualisation", "hypervisor",
-                    "hyper-v", "wsl", "vmx",
-                )
+                termo in docker_saida_normalizada for termo in termos_virtualizacao
+            )
+            docker_wsl_apenas = (
+                not docker_sem_virtualizacao and "wsl" in docker_saida_normalizada
             )
             print("\n%-14s [X]  instalado, mas NAO esta em execucao" % "Docker ativo:")
 
@@ -291,7 +313,20 @@ def main():
                 print("  " + linha)
 
         if docker_parado:
-            if docker_sem_virtualizacao:
+            if docker_wsl_apenas:
+                print("\nDocker Desktop mostrou 'WSL is not installed' / 'There was a problem")
+                print("with WSL'. Isto NAO e' problema de BIOS/virtualizacao - e' so o recurso")
+                print("WSL que nunca foi ativado neste Windows. E' o erro mais comum de quem")
+                print("esta instalando pela primeira vez, resolve em 3 passos:")
+                print("  1) Abra o PowerShell como Administrador (clique direito no icone ->")
+                print("     'Executar como Administrador')")
+                print("  2) Rode: wsl --install")
+                print("     (se ja tiver WSL mas desatualizado: wsl --update)")
+                print("  3) Reinicie o computador e abra o Docker Desktop de novo - espere o")
+                print("     icone da baleia ficar estavel")
+                print("Só vá para os passos de BIOS abaixo se a mensagem do Docker Desktop for")
+                print("especificamente 'Virtualization support not detected'.")
+            elif docker_sem_virtualizacao:
                 print("\nDocker Desktop esta instalado mas NAO consegue iniciar: falta suporte a")
                 print("virtualizacao. Instalar de novo NAO resolve - o ajuste e' fora do Docker.")
                 print("  Windows: 1) reinicie e entre na BIOS/UEFI (tecla F2, F10, DEL ou ESC no")
@@ -310,7 +345,9 @@ def main():
             else:
                 print("\nDocker esta instalado, mas o servico nao respondeu.")
                 print("  macOS/Windows: abra o app Docker Desktop e espere o icone")
-                print("                 da baleia ficar estavel.")
+                print("                 da baleia ficar estavel. No Windows, se aparecer")
+                print("                 'WSL is not installed', rode 'wsl --install' no")
+                print("                 PowerShell como Administrador e reinicie.")
                 print("  Linux:         sudo systemctl start docker")
 
         if compose_ausente:
