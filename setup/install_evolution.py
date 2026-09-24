@@ -100,9 +100,48 @@ def _docker_is_ready():
     return True
 
 
+def _looks_like_old_evolution():
+    """So arquiva a pasta se ela for mesmo uma instalacao da Evolution (formato antigo)."""
+    env_values = _read_env(EVO_DIR / ".env")
+    if {"DB_CONNECTION", "DATABASE_PROVIDER", "AUTHENTICATION_API_KEY", "API_KEY"} & set(env_values):
+        return True
+    try:
+        git_config = (EVO_DIR / ".git" / "config").read_text(encoding="utf-8")
+    except OSError:
+        git_config = ""
+    return "EvolutionAPI/evolution-api" in git_config
+
+
+def _old_container_ids():
+    """Containers criados A PARTIR desta pasta (label working_dir do Compose).
+
+    Nunca usar `docker compose down` aqui: o compose upstream antigo usa o projeto
+    'evolution-api', e o down derrubaria QUALQUER projeto com esse nome na maquina,
+    mesmo que ele rode de outra pasta (ex.: uma Evolution de producao do aluno).
+    """
+    ids = set()
+    for working_dir in {str(EVO_DIR), str(EVO_DIR.resolve())}:
+        result = _run(
+            ["docker", "ps", "-aq", "--filter", f"label=com.docker.compose.project.working_dir={working_dir}"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if result and result.returncode == 0:
+            ids.update(result.stdout.split())
+    return sorted(ids)
+
+
 def _archive_old_installation():
+    if not _looks_like_old_evolution():
+        print(f"\n❌ A pasta {EVO_DIR} já existe e não parece ser uma instalação da Evolution.")
+        print("   Mova ou renomeie essa pasta e rode este instalador novamente.")
+        return False
     print("\n🔄 Encontrei uma instalação antiga da Evolution. Vou guardá-la antes de recriar.")
-    _run(["docker", "compose", "down", "--remove-orphans"], cwd=str(EVO_DIR), timeout=120)
+    container_ids = _old_container_ids()
+    if container_ids:
+        # Remove so os containers desta pasta; os volumes (dados) ficam preservados.
+        _run(["docker", "rm", "-f", *container_ids], timeout=120, stdout=subprocess.DEVNULL)
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     archived = EVO_DIR.with_name(f"{EVO_DIR.name}.antigo-{timestamp}")
     suffix = 1
@@ -111,6 +150,7 @@ def _archive_old_installation():
         suffix += 1
     EVO_DIR.rename(archived)
     print(f"   Instalação anterior guardada em: {archived}")
+    return True
 
 
 def _write_files(api_key, pg_password):
@@ -211,7 +251,9 @@ def main():
 
     env_values = _read_env(EVO_DIR / ".env")
     if evolution_ok():
-        if _is_new_format() and env_values.get("AUTHENTICATION_API_KEY") and _key_is_valid(env_values["AUTHENTICATION_API_KEY"]):
+        # Aceita qualquer Evolution que responda com a chave deste .env — inclusive uma
+        # instalacao antiga que o aluno ja fez funcionar. Reinstalar ai so atrapalharia.
+        if env_values.get("AUTHENTICATION_API_KEY") and _key_is_valid(env_values["AUTHENTICATION_API_KEY"]):
             print(f"✅ A Evolution API deste agente já está rodando em localhost:{EVO_PORT}.")
             print("\nPróxima etapa:")
             print("  python3 setup/connect_whatsapp.py")
@@ -220,8 +262,9 @@ def main():
         print("   Pare esse container no Docker Desktop e rode este instalador novamente.")
         return 1
 
-    if EVO_DIR.exists() and not _is_new_format():
-        _archive_old_installation()
+    if EVO_DIR.exists() and any(EVO_DIR.iterdir()) and not _is_new_format():
+        if not _archive_old_installation():
+            return 1
 
     env_values = _read_env(EVO_DIR / ".env")
     api_key = env_values.get("AUTHENTICATION_API_KEY") or secrets.token_hex(24)
