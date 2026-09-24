@@ -27,18 +27,17 @@ atual — sem ela o `nvm install` responde `command not found`):
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh"
-nvm install 20
+nvm install --lts
 ```
 
 Confira depois de instalar:
 
 ```bash
-node --version    # precisa ser 20 ou maior
+node --version    # precisa ser 22 ou maior para o Claude Code
 ```
 
-> ⚠️ **O piso do produto é Node 20** — é o que a Gemini (opção recomendada) exige, e o
-> Codex também roda nele. **O Claude Code exige Node 22.** Na dúvida, instale a versão
-> LTS mais recente: ela atende as três.
+> ⚠️ **O Claude Code exige Node 22**; o Codex roda a partir do 20. Na dúvida, instale a
+> versão LTS mais recente: ela atende as duas.
 
 > ⚠️ **Digite `node --version`, não `node` sozinho.** Digitar só `node` te joga no console
 > interno do Node (o prompt vira `>`) e qualquer comando depois disso dá
@@ -50,22 +49,24 @@ node --version    # precisa ser 20 ou maior
 
 | IA | Comando | Node mínimo | Custo |
 |---|---|---|---|
-| **Gemini** — recomendada | `npm install -g @google/gemini-cli` | 20+ | Grátis |
+| **Claude Code** — recomendada | `npm install -g @anthropic-ai/claude-code` | 22+ | Exige assinatura Claude Pro (~US$20/mês) |
 | **Codex** | `npm install -g @openai/codex` | 20+ | Grátis por tempo limitado |
-| **Claude Code** | `npm install -g @anthropic-ai/claude-code` | 22+ | Exige assinatura Claude Pro (~US$20/mês) |
+
+> 🧠 **Instale com o modelo mais forte, no nível alto:** abra a IA com
+> `claude --model opus --effort high` (Opus) ou `codex -m gpt-6-sol -c model_reasoning_effort=high` (GPT-6-Sol).
+> Modelo menor erra mais durante a instalação e deixa bug no agente.
 
 > 🔴 **Claude Code precisa da assinatura Pro, não de créditos de API.** São coisas
 > diferentes — você não precisa comprar crédito no console da Anthropic para instalar o
-> agente. E ninguém é obrigado a pagar nada: o setup inteiro roda de graça no Gemini.
+> agente.
 
 ### Se der erro no `npm install -g`
 
 | Erro | Sistema | Correção |
 |---|---|---|
-| `gemini : O termo 'gemini' não é reconhecido como nome de cmdlet` | Windows | O npm instalou, mas o terminal ainda carrega o PATH antigo. **Feche e reabra o terminal** e rode `gemini --version`. Se persistir: `npm list -g --depth=0` (tem que aparecer `@google/gemini-cli`) e confira `npm config get prefix` no **Path** das Variáveis de Ambiente. Atalho: `npx @google/gemini-cli`. O pacote é `@google/gemini-cli` — `@google/generative-ai-cli` não existe (erro 404) |
-| `usage limit reached for gemini` | Qualquer | É a cota **grátis diária** da sua conta Google no Gemini CLI, não um erro de instalação. Espere o reset e continue de onde parou, **ou** abra `codex`/`claude` na mesma pasta e digite `INICIAR SETUP`, **ou** use outra conta Google. Não precisa comprar crédito de API |
-| `gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows | Abra o PowerShell **normal** (NÃO precisa ser Administrador — `-Scope CurrentUser` altera só o seu perfil de usuário), rode `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirme com `S`, **feche e reabra** o terminal. Vale para `gemini`, `codex` e `claude`. |
-| `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS / Linux | Instale o Node por um gerenciador do próprio usuário (`brew install node` no macOS, nvm no Linux) e repita o `npm install -g` — assim não precisa de permissão especial. Se não der, aí sim repita o **mesmo comando da IA que você escolheu** com `sudo` na frente (ex.: `sudo npm install -g @google/gemini-cli`) |
+| `claude : O termo 'claude' não é reconhecido como nome de cmdlet` (vale igual para `codex`) | Windows | O npm instalou, mas o terminal ainda carrega o PATH antigo. **Feche e reabra o terminal** e rode `claude --version` (ou `codex --version`). Se persistir: `npm list -g --depth=0` (tem que aparecer `@anthropic-ai/claude-code` ou `@openai/codex`) e confira `npm config get prefix` no **Path** das Variáveis de Ambiente. Atalho: `npx @anthropic-ai/claude-code` (ou `npx @openai/codex`) |
+| `claude.ps1` / `codex.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows | Abra o PowerShell **normal** (NÃO precisa ser Administrador — `-Scope CurrentUser` altera só o seu perfil de usuário), rode `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirme com `S`, **feche e reabra** o terminal. Vale para `codex` e `claude`. |
+| `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS / Linux | Instale o Node por um gerenciador do próprio usuário (`brew install node` no macOS, nvm no Linux) e repita o `npm install -g` — assim não precisa de permissão especial. Se não der, aí sim repita o **mesmo comando da IA que você escolheu** com `sudo` na frente (ex.: `sudo npm install -g @anthropic-ai/claude-code`) |
 
 > ⚠️ **Não use `sudo chown -R` em `/usr/local/bin`** para resolver o EACCES. É uma
 > "solução" que circula na internet e ela reescreve o dono de programas que não têm

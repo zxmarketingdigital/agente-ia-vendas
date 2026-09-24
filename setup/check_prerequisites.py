@@ -26,9 +26,9 @@ WINDOWS = os.name == "nt"
 PY_CMD = "python" if WINDOWS else "python3"
 
 # Versao minima de Node por CLI (campo `engines.node` do proprio pacote, conferido
-# em 13/Ago/26): gemini-cli >=20, codex >=16, claude-code >=22. O piso do produto e'
-# 20, porque a Gemini e' a opcao recomendada/gratuita — declarar 18 aprovava uma
-# maquina onde o `npm install -g @google/gemini-cli` ia falhar depois.
+# em 13/Ago/26): codex >=16, claude-code >=22. O piso do produto segue 20 (definido
+# quando o Gemini CLI ainda era opcao; ele saiu em 24/Set/26 e o piso foi mantido pra
+# nao mudar comportamento). O Claude Code, recomendado, e' avisado a parte abaixo.
 NODE_MINIMO = (20,)
 NODE_CLAUDE_CODE = (22,)
 
@@ -364,7 +364,7 @@ def main():
     # Aviso, nao bloqueio: so importa para quem escolheu o Claude Code.
     node = versao_do_node()
     if node is not None and node[:1] < NODE_CLAUDE_CODE:
-        print("\n[!] Seu Node e' %s. Gemini e Codex rodam nele, mas o Claude Code"
+        print("\n[!] Seu Node e' %s. O Codex roda nele, mas o Claude Code"
               % ".".join(str(n) for n in node))
         print("    exige Node %d ou maior — se voce escolheu o Claude Code,"
               % NODE_CLAUDE_CODE[0])

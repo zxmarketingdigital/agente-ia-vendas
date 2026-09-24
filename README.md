@@ -7,11 +7,11 @@ Um **agente de vendas IA que responde no WhatsApp** sem código complicado. Setu
 Cole no terminal as três linhas da IA que você escolheu — ela faz o resto:
 
 ```bash
-# Gemini (grátis) — a opção recomendada
-npm install -g @google/gemini-cli
+# Claude Code (recomendado) — exige assinatura Claude Pro (~US$20/mês)
+npm install -g @anthropic-ai/claude-code
 git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
 cd agente-ia-vendas
-gemini
+claude --model opus --effort high
 ```
 
 ```bash
@@ -19,28 +19,24 @@ gemini
 npm install -g @openai/codex
 git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
 cd agente-ia-vendas
-codex
+codex -m gpt-6-sol -c model_reasoning_effort=high
 ```
 
-```bash
-# Claude Code — exige assinatura Claude Pro (~US$20/mês)
-npm install -g @anthropic-ai/claude-code
-git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
-cd agente-ia-vendas
-claude
-```
+> 🧠 **Instale sempre com o modelo mais forte, no nível alto:** **Opus** no Claude Code ou
+> **GPT-6-Sol** no Codex, com esforço **High**. A última linha de cada bloco já abre a IA
+> assim. Modelo menor erra mais no meio da instalação e deixa bug no agente.
 
-> **A primeira linha instala a IA — não pule.** Ela é o que faz o comando `gemini`
-> (ou `codex`/`claude`) existir no seu terminal. Se você já instalou antes, rodar de novo
+> **A primeira linha instala a IA — não pule.** Ela é o que faz o comando `claude`
+> (ou `codex`) existir no seu terminal. Se você já instalou antes, rodar de novo
 > não quebra nada: o `npm install -g` apenas atualiza.
 >
 > **Erro `npm: command not found` ou `'npm' não é reconhecido`?** Falta o Node.js — instale
 > a versão **LTS mais recente** em [nodejs.org](https://nodejs.org) e cole as linhas de novo
-> (piso: Node 20; o Claude Code exige 22).
+> (o Claude Code exige Node 22 ou mais novo).
 >
-> **Instalou e o terminal ainda diz `'gemini' não é reconhecido`?** É o PATH antigo da
+> **Instalou e o terminal ainda diz `'claude'` (ou `'codex'`) `não é reconhecido`?** É o PATH antigo da
 > sessão: **feche e reabra o terminal**, e cole a partir do `cd`. Atalho pra destravar na
-> hora: `npx @google/gemini-cli`. Detalhes em [pré-requisitos](docs/prerequisitos.md).
+> hora: `npx @anthropic-ai/claude-code` (ou `npx @openai/codex`). Detalhes em [pré-requisitos](docs/prerequisitos.md).
 
 > **Funciona no macOS, no Linux e no Windows** (PowerShell, CMD ou Git Bash) — são três
 > linhas independentes de propósito, sem `&&` nem `2>/dev/null`, que não existem em todos
@@ -54,7 +50,7 @@ A IA abre automaticamente **dentro da pasta clonada** e conduz o setup por você
 
 > 👉 **Assim que ela abrir, digite `INICIAR SETUP` e aperte Enter.** Na maioria das vezes ela
 > já começa sozinha — se isso acontecer, ótimo, pode ignorar. Mas se você vir só a tela de
-> boas-vindas da IA (algo como *"Tips for getting started: 1. Create GEMINI.md files..."*),
+> boas-vindas da IA,
 > é ela esperando você: digite `INICIAR SETUP` que o setup começa.
 
 > 🛑 **O `cd agente-ia-vendas` não é opcional.** Se você abrir a IA fora dessa pasta, ela
@@ -99,8 +95,7 @@ Se purchase intent → envia checkout link
 ```
 agente-ia-vendas/
 ├── SETUP.md                           ← ROTEIRO CANÔNICO do setup (corrija aqui)
-├── CLAUDE.md                          ← porta de entrada do Claude Code  ─┐
-├── GEMINI.md                          ← porta de entrada do Gemini CLI   ─┼→ apontam p/ SETUP.md
+├── CLAUDE.md                          ← porta de entrada do Claude Code  ─┬→ apontam p/ SETUP.md
 ├── AGENTS.md                          ← porta de entrada do Codex CLI    ─┘
 ├── README.md                          ← Documentação técnica
 │

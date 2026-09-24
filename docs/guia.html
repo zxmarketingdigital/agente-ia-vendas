@@ -779,7 +779,7 @@ footer span { color: var(--accent-purple); }
   <p class="hero-sub">
     Você responde algumas perguntas.<br>
     <strong>A IA que você escolher instala, configura e ativa tudo por você.</strong><br>
-    Gemini (grátis), Codex ou Claude Code — sem digitar comandos, sem código.
+    Claude Code ou Codex — sem digitar comandos, sem código.
   </p>
 
   <div class="hero-mockup">
@@ -829,7 +829,7 @@ footer span { color: var(--accent-purple); }
 <section>
   <div class="section-badge"><div class="badge">Visão Geral</div></div>
   <h2 class="section-title">Como funciona o setup</h2>
-  <p class="section-sub">A IA de terminal que você escolher conduz uma conversa guiada — ela instala, configura e testa tudo enquanto você responde perguntas simples. O roteiro é o mesmo nas três: <strong>Gemini</strong>, <strong>Codex</strong> ou <strong>Claude Code</strong>.</p>
+  <p class="section-sub">A IA de terminal que você escolher conduz uma conversa guiada — ela instala, configura e testa tudo enquanto você responde perguntas simples. O roteiro é o mesmo nas duas: <strong>Claude Code</strong> ou <strong>Codex</strong>. Instale sempre com o modelo mais forte, no nível alto: <strong>Opus</strong> no Claude Code ou <strong>GPT-6-Sol</strong> no Codex.</p>
 
   <div class="flow">
     <div class="flow-step"><span class="flow-icon">📋</span><span class="flow-name">1 comando<br>no terminal</span></div>
@@ -878,7 +878,7 @@ footer span { color: var(--accent-purple); }
     </div>
   </div>
 
-  <p style="color:var(--text-secondary); margin-bottom: 24px;">Este é o <strong style="color:var(--text-primary)">único comando</strong> de todo o processo. Escolha <strong style="color:var(--text-primary)">uma</strong> das três IAs e cole as 4 linhas dela no terminal — a primeira <strong style="color:var(--text-primary)">instala a IA</strong> (sem ela o comando não existe no seu terminal) e as outras abrem o setup na pasta certa.</p>
+  <p style="color:var(--text-secondary); margin-bottom: 24px;">Este é o <strong style="color:var(--text-primary)">único comando</strong> de todo o processo. Escolha <strong style="color:var(--text-primary)">uma</strong> das duas IAs e cole as 4 linhas dela no terminal — a primeira <strong style="color:var(--text-primary)">instala a IA</strong> (sem ela o comando não existe no seu terminal) e as outras abrem o setup na pasta certa.</p>
 
   <div class="terminal">
     <div class="terminal-bar">
@@ -886,30 +886,24 @@ footer span { color: var(--accent-purple); }
       <div class="terminal-title">Terminal — copie e cole as 4 linhas da SUA IA</div>
     </div>
     <div class="terminal-body">
-      <span class="t-line"><span class="t-comment"># Gemini — grátis, é a opção recomendada</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">npm install -g <span class="t-highlight">@google/gemini-cli</span></span></span>
+      <span class="t-line"><span class="t-comment"># Claude Code (recomendado) — exige assinatura Claude Pro (~US$20/mês)</span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">npm install -g <span class="t-highlight">@anthropic-ai/claude-code</span></span></span>
       <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span></span></span>
       <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd agente-ia-vendas</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">gemini</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">claude --model opus --effort high</span></span></span>
       <span class="t-line">&nbsp;</span>
       <span class="t-line"><span class="t-comment"># Codex</span></span>
       <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">npm install -g <span class="t-highlight">@openai/codex</span></span></span>
       <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span></span></span>
       <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd agente-ia-vendas</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">codex</span></span></span>
-      <span class="t-line">&nbsp;</span>
-      <span class="t-line"><span class="t-comment"># Claude Code — exige assinatura Claude Pro (~US$20/mês)</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">npm install -g <span class="t-highlight">@anthropic-ai/claude-code</span></span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span></span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd agente-ia-vendas</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">claude</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">codex -m gpt-6-sol -c model_reasoning_effort=high</span></span></span>
     </div>
   </div>
 
   <div class="callout success">
     <span class="callout-icon">✅</span>
     <div class="callout-body">
-      Quando a IA abrir, ela lê o roteiro do produto automaticamente (<strong>GEMINI.md</strong>, <strong>AGENTS.md</strong> ou <strong>CLAUDE.md</strong>, conforme a que você escolheu) e já começa dizendo: <em>"Oi! Vou criar seu agente de vendas agora..."</em> — sem você precisar pedir nada. <strong>Se em vez disso aparecer só a tela de boas-vindas da IA</strong> (algo como <em>"Tips for getting started: 1. Create GEMINI.md files..."</em>), ela está esperando você: digite <strong>INICIAR SETUP</strong> e aperte Enter.
+      Quando a IA abrir, ela lê o roteiro do produto automaticamente (<strong>CLAUDE.md</strong> ou <strong>AGENTS.md</strong>, conforme a que você escolheu) e já começa dizendo: <em>"Oi! Vou criar seu agente de vendas agora..."</em> — sem você precisar pedir nada. <strong>Se em vez disso aparecer só a tela de boas-vindas da IA</strong>, ela está esperando você: digite <strong>INICIAR SETUP</strong> e aperte Enter.
     </div>
   </div>
 
@@ -946,7 +940,7 @@ footer span { color: var(--accent-purple); }
     </div>
   </div>
 
-  <p style="color:var(--text-secondary); margin-bottom: 24px;">Após abrir a IA, uma conversa guiada começa sozinha. O exemplo abaixo foi gravado no <strong style="color:var(--text-primary)">Claude Code</strong>, mas o roteiro é <strong style="color:var(--text-primary)">idêntico</strong> no Gemini e no Codex — as três leem o mesmo <code>SETUP.md</code> do repositório.</p>
+  <p style="color:var(--text-secondary); margin-bottom: 24px;">Após abrir a IA, uma conversa guiada começa sozinha. O exemplo abaixo foi gravado no <strong style="color:var(--text-primary)">Claude Code</strong>, mas o roteiro é <strong style="color:var(--text-primary)">idêntico</strong> no Codex — as duas leem o mesmo <code>SETUP.md</code> do repositório.</p>
 
   <div class="dialogue">
     <div class="dialogue-bar">
@@ -1160,7 +1154,7 @@ footer span { color: var(--accent-purple); }
 
   <table class="data-table">
     <tr><th>Etapa</th><th>O que a IA faz por você</th><th>Tempo</th></tr>
-    <tr><td>0. As 4 linhas</td><td>Instala a IA (<code>npm install -g</code>) + git clone + cd + abre a IA (<code>gemini</code>, <code>codex</code> ou <code>claude</code>) — o único bloco manual de todo o processo</td><td>2 min</td></tr>
+    <tr><td>0. As 4 linhas</td><td>Instala a IA (<code>npm install -g</code>) + git clone + cd + abre a IA (<code>claude --model opus --effort high</code> ou <code>codex -m gpt-6-sol -c model_reasoning_effort=high</code>) — o único bloco manual de todo o processo</td><td>2 min</td></tr>
     <tr><td>1. Pré-requisitos</td><td>Verifica Python, Node, Docker e Git automaticamente</td><td>30s</td></tr>
     <tr><td>2. Evolution API</td><td>Instala e sobe via Docker (pula se já estiver rodando)</td><td>3–5 min</td></tr>
     <tr><td>3. WhatsApp</td><td>Gera QR Code — você só escaneia com o celular</td><td>2 min</td></tr>
@@ -1179,12 +1173,12 @@ footer span { color: var(--accent-purple); }
   <table class="data-table">
     <tr><th>O que você vê</th><th>Como resolver</th></tr>
     <tr>
-      <td><code>'gemini' não é reconhecido</code> / <code>command not found: gemini</code> (vale igual para <code>codex</code> e <code>claude</code>)</td>
-      <td>A IA não está instalada <em>ou</em> o terminal ainda está com o PATH antigo. Rode a <strong>primeira linha</strong> do bloco acima (<code>npm install -g …</code>), depois <strong>feche e reabra o terminal</strong> e cole a partir do <code>cd</code>. Para destravar na hora, sem fechar nada: <code>npx @google/gemini-cli</code>.</td>
+      <td><code>'claude' não é reconhecido</code> / <code>command not found: claude</code> (vale igual para <code>codex</code>)</td>
+      <td>A IA não está instalada <em>ou</em> o terminal ainda está com o PATH antigo. Rode a <strong>primeira linha</strong> do bloco acima (<code>npm install -g …</code>), depois <strong>feche e reabra o terminal</strong> e cole a partir do <code>cd</code>. Para destravar na hora, sem fechar nada: <code>npx @anthropic-ai/claude-code</code> (ou <code>npx @openai/codex</code>).</td>
     </tr>
     <tr>
       <td><code>npm: command not found</code> / <code>'npm' não é reconhecido</code></td>
-      <td>Falta o <strong>Node.js</strong> — é ele que traz o <code>npm</code>. Instale a versão <strong>LTS mais recente</strong> em <a href="https://nodejs.org" style="color:var(--accent-amber); text-decoration:underline">nodejs.org</a>, feche e reabra o terminal e cole as 4 linhas de novo (piso: Node 20; o Claude Code exige 22).</td>
+      <td>Falta o <strong>Node.js</strong> — é ele que traz o <code>npm</code>. Instale a versão <strong>LTS mais recente</strong> em <a href="https://nodejs.org" style="color:var(--accent-amber); text-decoration:underline">nodejs.org</a>, feche e reabra o terminal e cole as 4 linhas de novo (o Claude Code exige Node 22 ou mais novo).</td>
     </tr>
     <tr>
       <td>A IA começa a <strong>planejar a arquitetura</strong> ou pergunta qual biblioteca usar (Baileys, etc.)</td>
@@ -1195,8 +1189,8 @@ footer span { color: var(--accent-purple); }
       <td>Você digitou <code>node</code> sozinho e caiu no console do Node (o prompt virou <code>&gt;</code>). Digite <code>.exit</code> e rode o comando de novo.</td>
     </tr>
     <tr>
-      <td><code>gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada</code></td>
-      <td>Windows: o PowerShell bloqueia scripts por padrão. Abra o PowerShell <strong>normal</strong> (não precisa ser Administrador &mdash; <code>-Scope CurrentUser</code> altera só o seu perfil de usuário), rode <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>, confirme com <code>S</code> e <strong>feche e reabra</strong> o terminal. Vale para <code>gemini</code>, <code>codex</code> e <code>claude</code>.</td>
+      <td><code>claude.ps1</code> / <code>codex.ps1 não pode ser carregado porque a execução de scripts foi desabilitada</code></td>
+      <td>Windows: o PowerShell bloqueia scripts por padrão. Abra o PowerShell <strong>normal</strong> (não precisa ser Administrador &mdash; <code>-Scope CurrentUser</code> altera só o seu perfil de usuário), rode <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>, confirme com <code>S</code> e <strong>feche e reabra</strong> o terminal. Vale para <code>codex</code> e <code>claude</code>.</td>
     </tr>
     <tr>
       <td><code>npm error code EACCES … permission denied, mkdir '/usr/local/lib/node_modules/…'</code></td>
