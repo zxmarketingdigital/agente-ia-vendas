@@ -76,6 +76,12 @@ a Área de Trabalho, ou uma pasta vazia criada à mão.
 - Se instalar do zero → avise "Isso leva ~3 minutos, pode deixar rodando..." e execute
 - Confirme que está rodando antes de avançar
 
+> ⚠️ **Não altere a configuração da Evolution na mão.** Ela usa Postgres (sobe junto, no Docker) — a
+> Evolution v2 **não suporta SQLite nem precisa de Prisma/MySQL**. Se o script falhar, leia a mensagem
+> dele, corrija só o que ela pede (normalmente: Docker fechado ou porta 8080 ocupada) e rode
+> `python3 setup/install_evolution.py` de novo. Nunca edite o `docker-compose.yml` nem o `.env` gerados.
+> (O SQLite que aparece no projeto é só do histórico de conversas do agente, não da Evolution.)
+
 ---
 
 ## Etapa 3 — Conectar WhatsApp
@@ -143,6 +149,9 @@ Com os dados coletados, leia os templates e substitua todos os `{{placeholders}}
 - `templates/shared/sessions_template.py`
 - `templates/whatsapp/agent_template.py`
 - `templates/whatsapp/watcher_template.py`
+
+`{{EVOLUTION_API_KEY}}` = valor de `AUTHENTICATION_API_KEY` em
+`~/meu-agente/evolution-api/.env` (gerado na Etapa 2).
 
 Salve os arquivos gerados em:
 - `~/meu-agente/agent.py`
@@ -214,6 +223,8 @@ abrir ticket por causa disso.
 | `gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows: PowerShell bloqueia scripts por padrão. Atinge `gemini`, `codex` e `claude` instalados via npm | Abrir o PowerShell **normal** (NÃO precisa ser Administrador — `-Scope CurrentUser` só altera o perfil do próprio usuário) e rodar `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirmar com `S`, **fechar e abrir** o terminal |
 | `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS/Linux: o usuário não tem permissão de escrita na pasta global do npm | Primeiro tente instalar o Node por um gerenciador do próprio usuário (`brew install node` no macOS, nvm no Linux) e repetir o `npm install -g` — aí não precisa de permissão especial. Só se isso não der, repetir com `sudo` na frente. **Nunca** mandar `sudo chown -R` em `/usr/local/bin`: reescreve o dono de programas sem relação com o npm |
 | `python3` abre a Microsoft Store, ou `'python3' não é reconhecido` | Windows: o instalador do python.org cria `python`/`py`, não `python3` — e o sistema tem um atalho `python3` que abre a Store | Usar `python setup\check_prerequisites.py` (ou `py -3 ...`). Se o Python não estiver instalado, baixar em python.org marcando **Add python.exe to PATH** |
+| Evolution não sobe / erro de SQLite, Prisma, dokploy-network ou `version` obsoleto | Instalação antiga ou configuração incompatível | Rodar de novo `python3 setup/install_evolution.py` (ele recria a instalação antiga automaticamente) |
+| Porta 8080 ocupada | Outro container está usando a porta da Evolution | Parar o outro container no Docker Desktop e rodar de novo |
 | Janela do Mac pedindo acesso a Documentos / Área de Trabalho / Downloads | Permissão do macOS (TCC), não é a IA | Clicar em **Permitir**. Se já negou: Ajustes do Sistema → Privacidade e Segurança → Arquivos e Pastas |
 | `Do you trust the files in this folder?` / `Is this a project you created or one you trust?` | Checagem de segurança da própria IA | Confirmar a opção **1 (Yes, I trust this folder)** — **desde que** a Etapa 0 tenha passado. Se estiver na pasta errada, sair e refazer o clone |
 | A IA começa a "planejar a arquitetura" ou perguntar qual biblioteca usar (Baileys, etc.) | **Pasta errada** — ela não achou este roteiro e está improvisando | Voltar à Etapa 0 e refazer o clone |

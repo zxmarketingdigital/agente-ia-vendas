@@ -74,7 +74,7 @@ A IA abre automaticamente **dentro da pasta clonada** e conduz o setup por você
 
 ### Stack
 - **Evolution API** — Conexão com WhatsApp (open-source, gratuito)
-- **SQLite** — Banco de dados local (sessões + histórico)
+- **SQLite** — histórico de conversas do agente (a Evolution API usa Postgres próprio, criado automaticamente no Docker)
 - **Python 3.9+** — Lógica do agente
 - **Multi-IA** — OpenAI, Gemini ou Anthropic
 
@@ -152,7 +152,7 @@ Tudo automático, integrado com WhatsApp. ✨
 Para rodas 24/7:
 - **macOS/Linux:** LaunchAgent automático roda na inicialização
 - **VPS:** Docker Compose em qualquer servidor
-- **Docker:** `docker-compose.yml` incluído
+- **Docker:** o `docker-compose.yml` da Evolution é gerado pelo `setup/install_evolution.py`
 
 ## 📊 Versões Futuras
 
