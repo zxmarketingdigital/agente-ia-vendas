@@ -48,6 +48,12 @@ codex -m gpt-6-sol -c model_reasoning_effort=high
 
 A IA abre automaticamente **dentro da pasta clonada** e conduz o setup por você.
 
+> 🔑 **Primeira vez abrindo a IA? Não aparece lugar para escrever — é o login.** O Codex mostra
+> um menu (*"Sign in with ChatGPT"*, *"Provide your own API key"*…): use as **setas do teclado**
+> para marcar **Sign in with ChatGPT**, aperte **Enter**, entre com sua conta ChatGPT no navegador
+> e **volte para o terminal**. Se perguntar se confia na pasta, escolha **1 (Yes)**. Só então
+> aparece a caixa de texto.
+>
 > 👉 **Assim que ela abrir, digite `INICIAR SETUP` e aperte Enter.** Na maioria das vezes ela
 > já começa sozinha — se isso acontecer, ótimo, pode ignorar. Mas se você vir só a tela de
 > boas-vindas da IA,
