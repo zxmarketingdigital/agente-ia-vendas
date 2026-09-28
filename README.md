@@ -34,6 +34,14 @@ codex -m gpt-6-sol -c model_reasoning_effort=high
 > a versão **LTS mais recente** em [nodejs.org](https://nodejs.org) e cole as linhas de novo
 > (o Claude Code exige Node 22 ou mais novo).
 >
+> **O Codex abriu com `The 'gpt-6-sol' model is not supported when using Codex with a ChatGPT account`?**
+> Quase sempre é o Codex instalado no seu computador numa versão antiga, que ainda não conhece esse modelo.
+> Atualize com `npm install -g @openai/codex@latest`, **feche e reabra o terminal** e cole de
+> novo a partir do `cd`. Se o erro continuar, confira com `codex --version` se o número mudou
+> (um Codex antigo instalado por outro caminho, como o Homebrew, pode estar na frente). Para
+> não travar, abra só com `codex -c model_reasoning_effort=high` — sem o `-m gpt-6-sol` — e, se o
+> mesmo erro aparecer, digite `/model` dentro do Codex e escolha um dos modelos da lista.
+>
 > **Instalou e o terminal ainda diz `'claude'` (ou `'codex'`) `não é reconhecido`?** É o PATH antigo da
 > sessão: **feche e reabra o terminal**, e cole a partir do `cd`. Atalho pra destravar na
 > hora: `npx @anthropic-ai/claude-code` (ou `npx @openai/codex`). Detalhes em [pré-requisitos](docs/prerequisitos.md).
